@@ -480,6 +480,8 @@ public class MTInner: MTMathAtom {
     /// Optional explicit delimiter height (in points). When set, this overrides the automatic
     /// delimiter sizing based on inner content. Used by \big, \Big, \bigg, \Bigg commands.
     public var delimiterHeight: CGFloat?
+    /// Whether the inner list is rendered with TeX's boxed outline.
+    public var isBoxed = false
 
     init(_ inner:MTInner?) {
         super.init(inner)
@@ -488,6 +490,7 @@ public class MTInner: MTMathAtom {
         self.leftBoundary = MTMathAtom(inner?.leftBoundary)
         self.rightBoundary = MTMathAtom(inner?.rightBoundary)
         self.delimiterHeight = inner?.delimiterHeight
+        self.isBoxed = inner?.isBoxed ?? false
     }
     
     override init() {

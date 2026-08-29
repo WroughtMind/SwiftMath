@@ -1005,6 +1005,11 @@ public struct MTMathListBuilder {
             mathColorbox.colorString = color!
             mathColorbox.innerList = self.buildInternal(true)
             return mathColorbox
+        } else if command == "boxed" {
+            let boxed = MTInner()
+            boxed.innerList = self.buildInternal(true)
+            boxed.isBoxed = true
+            return boxed
         } else if command == "pmod" {
             // A pmod command has 1 argument - creates (mod n)
             let inner = MTInner()
@@ -1428,6 +1433,11 @@ public struct MTMathListBuilder {
             mathColorbox.colorString = self.readColor()!
             mathColorbox.innerList = self.buildInternal(true)
             return mathColorbox
+        } else if command == "boxed" {
+            let boxed = MTInner()
+            boxed.innerList = self.buildInternal(true)
+            boxed.isBoxed = true
+            return boxed
         } else {
             self.setError(.invalidCommand, message: "Invalid command \\\(command)")
             return nil

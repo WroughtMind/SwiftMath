@@ -103,6 +103,49 @@ public class MTDisplay:NSObject {
     
 }
 
+final class MTBoxedDisplay: MTDisplay {
+    private let inner: MTDisplay
+    private let ruleThickness: CGFloat
+
+    init(inner: MTDisplay, padding: CGFloat, ruleThickness: CGFloat) {
+        self.inner = inner
+        self.ruleThickness = ruleThickness
+        super.init()
+        inner.position = CGPoint(x: padding, y: 0)
+        width = inner.width + padding + padding
+        ascent = inner.ascent + padding
+        descent = inner.descent + padding
+        range = inner.range
+    }
+
+    override var textColor: MTColor? {
+        get { super.textColor }
+        set {
+            super.textColor = newValue
+            inner.textColor = newValue
+        }
+    }
+
+    override public func draw(_ context: CGContext) {
+        super.draw(context)
+        context.saveGState()
+        context.translateBy(x: position.x, y: position.y)
+        inner.draw(context)
+        if let textColor {
+            context.setStrokeColor(textColor.cgColor)
+        }
+        context.setLineWidth(ruleThickness)
+        let inset = ruleThickness / 2
+        context.stroke(CGRect(
+            x: inset,
+            y: -descent + inset,
+            width: width - ruleThickness,
+            height: ascent + descent - ruleThickness
+        ))
+        context.restoreGState()
+    }
+}
+
 /// Special class to be inherited from that implements the DownShift protocol
 class MTDisplayDS : MTDisplay, DownShift {
     

@@ -240,6 +240,7 @@ public class MTMathAtomFactory {
         "longmapsto" : MTMathAtom(type: .relation, value: "\u{27FC}"),
         "hookrightarrow" : MTMathAtom(type: .relation, value: "\u{21AA}"),
         "hookleftarrow" : MTMathAtom(type: .relation, value: "\u{21A9}"),
+        "rightleftharpoons" : MTMathAtom(type: .relation, value: "\u{21CC}"),
 
 
         // Relations
