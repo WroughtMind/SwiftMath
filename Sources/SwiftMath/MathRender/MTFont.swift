@@ -57,6 +57,7 @@ public class MTFont {
         newFont.ctFont = CTFontCreateWithGraphicsFont(self.defaultCGFont, size, nil, nil)
         newFont.rawMathTable = self.rawMathTable
         newFont.mathTable = MTFontMathTable(withFont: newFont, mathTable: newFont.rawMathTable!)
+        newFont.fallbackFont = self.fallbackFont
         return newFont
     }
     

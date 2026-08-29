@@ -63,6 +63,8 @@ public final class MTFontV2: MTFont {
         get { fatalError("\(#function): access to \(font.rawValue) not allowed.") }
     }
     public override func copy(withSize size: CGFloat) -> MTFont {
-        MTFontV2(font: font, size: size)
+        let newFont = MTFontV2(font: font, size: size)
+        newFont.fallbackFont = fallbackFont
+        return newFont
     }
 }
