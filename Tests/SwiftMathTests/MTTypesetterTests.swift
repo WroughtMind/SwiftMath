@@ -1692,7 +1692,7 @@ final class MTTypesetterTests: XCTestCase {
         }
 
         // dimensions
-        XCTAssertEqual(display.ascent, 14.98, accuracy: 0.01)
+        XCTAssertEqual(display.ascent, 14.68, accuracy: 0.01)
         XCTAssertEqual(display.descent, 4.10, accuracy: 0.01)
         XCTAssertEqual(display.width, 44.86, accuracy: 0.01)
     }
@@ -3900,4 +3900,3 @@ final class MTTypesetterTests: XCTestCase {
     }
 
 }
-

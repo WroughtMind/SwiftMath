@@ -64,7 +64,9 @@ public final class MTFontV2: MTFont {
     }
     public override func copy(withSize size: CGFloat) -> MTFont {
         let newFont = MTFontV2(font: font, size: size)
-        newFont.fallbackFont = fallbackFont
+        if let fallbackFont {
+            newFont.fallbackFont = CTFontCreateCopyWithAttributes(fallbackFont, size, nil, nil)
+        }
         return newFont
     }
 }

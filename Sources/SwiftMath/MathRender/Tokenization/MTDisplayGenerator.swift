@@ -357,11 +357,8 @@ class MTDisplayGenerator {
 
     /// Create a text display for a character or string
     private func createTextDisplay(_ text: String, at position: CGPoint, element: MTBreakableElement, hasScript: Bool = false) -> MTDisplay {
-        let attrString = NSMutableAttributedString(string: text)
-        attrString.addAttribute(
-            NSAttributedString.Key(kCTFontAttributeName as String),
-            value: font.ctFont as Any,
-            range: NSMakeRange(0, attrString.length)
+        let attrString = NSMutableAttributedString(
+            attributedString: font.attributedStringWithFallback(for: text)
         )
 
         // If the atom was fused (multiple ordinary chars combined), use fusedAtoms

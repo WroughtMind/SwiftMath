@@ -1095,16 +1095,23 @@ class MTAtomTokenizer {
     }
 
     private func tokenizeInner(_ inner: MTInner, prevAtom: MTMathAtom?, atomIndex: Int) -> MTBreakableElement? {
-        let typesetter = MTTypesetter(withFont: font, style: style, cramped: cramped, spaced: false)
-        guard let display = typesetter.makeLeftRight(inner) else { return nil }
         let renderedDisplay: MTDisplay
         if inner.isBoxed, let mathTable = font.mathTable {
+            guard let display = MTTypesetter.createLineForMathList(
+                inner.innerList,
+                font: font,
+                style: style,
+                cramped: cramped,
+                spaced: true
+            ) else { return nil }
             renderedDisplay = MTBoxedDisplay(
                 inner: display,
                 padding: mathTable.fractionNumeratorGapMin,
                 ruleThickness: mathTable.fractionRuleThickness
             )
         } else {
+            let typesetter = MTTypesetter(withFont: font, style: style, cramped: cramped, spaced: false)
+            guard let display = typesetter.makeLeftRight(inner) else { return nil }
             renderedDisplay = display
         }
 

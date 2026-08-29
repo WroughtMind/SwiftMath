@@ -395,6 +395,7 @@ public struct MTMathListBuilder {
             if error != nil { return nil } // If there is an error thus far then bail out.
             
             var atom: MTMathAtom? = nil
+            var usesFallbackText = false
             let char = self.getNextCharacter()
             
             if oneCharOnly {
@@ -518,20 +519,22 @@ public struct MTMathListBuilder {
             } else {
                 atom = MTMathAtomFactory.atom(forCharacter: char)
                 if atom == nil {
-                    // Not a recognized character in standard math mode
-                    // In text mode (spacesAllowed && roman style), accept any Unicode character for fallback font support
-                    // This enables Chinese, Japanese, Korean, emoji, etc. in \text{} commands
-                    if spacesAllowed && currentFontStyle == .roman {
+                    if char.isWhitespace { continue }
+                    let containsControl = char.unicodeScalars.contains {
+                        CharacterSet.controlCharacters.contains($0)
+                    }
+                    if !containsControl {
                         atom = MTMathAtom(type: .ordinary, value: String(char))
+                        usesFallbackText = true
                     } else {
-                        // In math mode or non-text commands, skip unrecognized characters
-                        continue
+                        self.setError(.invalidCommand, message: "Control characters are not valid in math input")
+                        return nil
                     }
                 }
             }
             
             assert(atom != nil, "Atom shouldn't be nil")
-            atom?.fontStyle = currentFontStyle
+            atom?.fontStyle = usesFallbackText ? .roman : currentFontStyle
             // If this is an accent atom (e.g., from an accented character like "é"),
             // propagate the font style to the inner list atoms that don't already have
             // an explicit font style. This handles Unicode accented characters which are

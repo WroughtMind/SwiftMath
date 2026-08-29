@@ -57,8 +57,56 @@ public class MTFont {
         newFont.ctFont = CTFontCreateWithGraphicsFont(self.defaultCGFont, size, nil, nil)
         newFont.rawMathTable = self.rawMathTable
         newFont.mathTable = MTFontMathTable(withFont: newFont, mathTable: newFont.rawMathTable!)
-        newFont.fallbackFont = self.fallbackFont
+        if let fallbackFont {
+            newFont.fallbackFont = CTFontCreateCopyWithAttributes(fallbackFont, size, nil, nil)
+        }
         return newFont
+    }
+
+    /// Builds a text run using the math font where possible and Core Text's
+    /// cascade from the configured fallback font for characters it does not
+    /// contain. Measurement and drawing share this attributed string so text
+    /// such as `\text{中文}` cannot be measured with one font and drawn with
+    /// another.
+    public func attributedStringWithFallback(for text: String) -> NSAttributedString {
+        let attributed = NSMutableAttributedString(string: text)
+        guard !text.isEmpty else { return attributed }
+        let fullRange = NSRange(location: 0, length: attributed.length)
+        attributed.addAttribute(
+            kCTFontAttributeName as NSAttributedString.Key,
+            value: ctFont as Any,
+            range: fullRange
+        )
+
+        guard let fallbackFont else { return attributed }
+        let source = text as NSString
+        var location = 0
+        while location < source.length {
+            let characterRange = source.rangeOfComposedCharacterSequence(at: location)
+            let characters = Array(source.substring(with: characterRange).utf16)
+            var glyphs = [CGGlyph](repeating: 0, count: characters.count)
+            var mutableCharacters = characters
+            let primaryContainsCharacter = CTFontGetGlyphsForCharacters(
+                self.ctFont,
+                &mutableCharacters,
+                &glyphs,
+                mutableCharacters.count
+            ) && glyphs.allSatisfy { $0 != 0 }
+            if !primaryContainsCharacter {
+                let resolved = CTFontCreateForString(
+                    fallbackFont,
+                    text as CFString,
+                    CFRange(location: characterRange.location, length: characterRange.length)
+                )
+                attributed.addAttribute(
+                    kCTFontAttributeName as NSAttributedString.Key,
+                    value: resolved,
+                    range: characterRange
+                )
+            }
+            location = NSMaxRange(characterRange)
+        }
+        return attributed
     }
     
     func get(nameForGlyph glyph:CGGlyph) -> String {

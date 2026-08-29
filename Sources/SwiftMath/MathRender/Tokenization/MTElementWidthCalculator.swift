@@ -32,9 +32,7 @@ class MTElementWidthCalculator {
     func measureText(_ text: String) -> CGFloat {
         guard !text.isEmpty else { return 0 }
 
-        let attrString = NSAttributedString(string: text, attributes: [
-            kCTFontAttributeName as NSAttributedString.Key: font.ctFont as Any
-        ])
+        let attrString = font.attributedStringWithFallback(for: text)
         let line = CTLineCreateWithAttributedString(attrString as CFAttributedString)
         return CGFloat(CTLineGetTypographicBounds(line, nil, nil, nil))
     }
