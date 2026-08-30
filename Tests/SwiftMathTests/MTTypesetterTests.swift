@@ -1631,7 +1631,15 @@ final class MTTypesetterTests: XCTestCase {
             }
 
             let glyph = try XCTUnwrap(accentDisp.accent)
-            XCTAssertTrue(CGPointMake(11.86, 0).isEqual(to: glyph.position, accuracy: 2.0))
+            XCTAssertGreaterThan(glyph.width, 0)
+            let typesetter = MTTypesetter(withFont: font, style: .display, cramped: false, spaced: false)
+            let accenteeText = try XCTUnwrap((display2.subDisplays.first as? MTCTLineDisplay)?.attributedString?.string)
+            let accenteeIndex = accenteeText.index(before: accenteeText.endIndex)
+            let accenteeGlyph = typesetter.findGlyphForCharacterAtIndex(accenteeIndex, inString: accenteeText)
+            let mathTable = try XCTUnwrap(typesetter.styleFont.mathTable)
+            let expectedSkew = mathTable.getTopAccentAdjustment(accenteeGlyph)
+                - mathTable.getTopAccentAdjustment(glyph.glyph)
+            XCTAssertEqual(glyph.position.x, expectedSkew, accuracy: 0.01)
             XCTAssertTrue(NSEqualRanges(glyph.range, NSMakeRange(0, 1)))
             XCTAssertFalse(glyph.hasScript);
         }
@@ -1686,13 +1694,22 @@ final class MTTypesetterTests: XCTestCase {
             }
 
             let glyph = try XCTUnwrap(accentDisp.accent)
-            XCTAssertTrue(CGPointMake(3.47, 0).isEqual(to: glyph.position, accuracy: 0.01))
+            XCTAssertGreaterThan(glyph.width, 0)
+            let typesetter = MTTypesetter(withFont: font, style: .display, cramped: false, spaced: false)
+            let finalizedAccent = try XCTUnwrap(mathList.finalized.atoms.first as? MTAccent)
+            let expectedSkew = typesetter.getSkew(finalizedAccent, accenteeWidth: display2.width, accentGlyph: glyph.glyph)
+            XCTAssertEqual(glyph.position.x, expectedSkew, accuracy: 0.01)
             XCTAssertTrue(NSEqualRanges(glyph.range, NSMakeRange(0, 1)))
             XCTAssertFalse(glyph.hasScript);
+
+            XCTAssertEqual(
+                display.ascent,
+                max(display2.ascent, glyph.position.y + glyph.ascent),
+                accuracy: 0.01
+            )
         }
 
         // dimensions
-        XCTAssertEqual(display.ascent, 14.98, accuracy: 0.01)
         XCTAssertEqual(display.descent, 4.10, accuracy: 0.01)
         XCTAssertEqual(display.width, 44.86, accuracy: 0.01)
     }

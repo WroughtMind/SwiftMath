@@ -1421,6 +1421,7 @@ class MTTypesetter {
             var advance = CGSize.zero
             CTFontGetBoundingRectsForGlyphs(styleFont.ctFont, .horizontal, &candidate, &bounds, 1)
             CTFontGetAdvancesForGlyphs(styleFont.ctFont, .horizontal, &candidate, &advance, 1)
+            guard advance.width > 0 else { continue }
             if CGRectGetMaxX(bounds) > availableWidth {
                 if index == 0 {
                     selectedGlyph = candidate
@@ -1467,7 +1468,14 @@ class MTTypesetter {
         // Only apply to wide accents (set by factory based on LaTeX command)
         guard accent.isWide else { return nil }
 
-        // Map Unicode combining characters to non-combining glyph names with stretchy variants
+        return getNamedAccentGlyphName(accent)
+    }
+
+    /// Maps combining accent characters to the corresponding real glyph in the
+    /// math font. Latin Modern does not expose the combining characters as
+    /// drawable glyphs, so fixed accents use the named glyph just like their
+    /// wide counterparts, without applying wide stretching.
+    func getNamedAccentGlyphName(_ accent: MTAccent) -> String? {
         switch accent.nucleus {
         case "\u{0302}":  // COMBINING CIRCUMFLEX ACCENT (\hat or \widehat)
             return "circumflex"
@@ -1510,6 +1518,8 @@ class MTTypesetter {
             // For arrow accents, use non-combining arrow glyphs (e.g., "arrowright")
             // These have larger horizontal variants than the combining versions
             accentGlyph = styleFont.get(glyphWithName: arrowGlyphName)
+        } else if let accentGlyphName = getNamedAccentGlyphName(accent) {
+            accentGlyph = styleFont.get(glyphWithName: accentGlyphName)
         } else {
             // For regular accents, use Unicode character lookup
             let end = accent.nucleus.index(before: accent.nucleus.endIndex)
@@ -1569,7 +1579,10 @@ class MTTypesetter {
             }
         }
 
-        if (isWideAccent || isArrowAccent) && glyphWidth == 0 { return nil }
+        if (isWideAccent || isArrowAccent || getNamedAccentGlyphName(accent) != nil),
+           glyphWidth == 0 {
+            return nil
+        }
 
         // Special accents (arrows and wide accents) need more vertical space and different positioning
         let delta: CGFloat
