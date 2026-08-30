@@ -2669,27 +2669,17 @@ final class MTMathListBuilderTests: XCTestCase {
         let frac = try XCTUnwrap(unwrappedList.atoms[0] as? MTFraction, desc)
         XCTAssertEqual(frac.type, .fraction, desc)
         XCTAssertTrue(frac.hasRule, desc)
+        XCTAssertEqual(frac.forcedStyle, .display, desc)
+        XCTAssertEqual(MTMathListBuilder.mathListToString(unwrappedList), str)
 
         // Check numerator
         let numerator = try XCTUnwrap(frac.numerator, desc)
         XCTAssertTrue(numerator.atoms.count >= 1, "Numerator should have at least style atom")
 
-        // First atom should be displaystyle
-        if numerator.atoms.count > 1 {
-            let styleAtom = numerator.atoms[0] as? MTMathStyle
-            XCTAssertNotNil(styleAtom, "First atom should be style atom")
-            XCTAssertEqual(styleAtom?.style, .display, "Should be display style")
-        }
-
         // Check denominator
         let denominator = try XCTUnwrap(frac.denominator, desc)
         XCTAssertTrue(denominator.atoms.count >= 1, "Denominator should have at least style atom")
 
-        if denominator.atoms.count > 1 {
-            let styleAtom = denominator.atoms[0] as? MTMathStyle
-            XCTAssertNotNil(styleAtom, "First atom should be style atom")
-            XCTAssertEqual(styleAtom?.style, .display, "Should be display style")
-        }
     }
 
     func testTextStyleFraction() throws {
@@ -2706,26 +2696,17 @@ final class MTMathListBuilderTests: XCTestCase {
         let frac = try XCTUnwrap(unwrappedList.atoms[0] as? MTFraction, desc)
         XCTAssertEqual(frac.type, .fraction, desc)
         XCTAssertTrue(frac.hasRule, desc)
+        XCTAssertEqual(frac.forcedStyle, .text, desc)
+        XCTAssertEqual(MTMathListBuilder.mathListToString(unwrappedList), str)
 
         // Check numerator
         let numerator = try XCTUnwrap(frac.numerator, desc)
         XCTAssertTrue(numerator.atoms.count >= 1, "Numerator should have at least style atom")
 
-        if numerator.atoms.count > 1 {
-            let styleAtom = numerator.atoms[0] as? MTMathStyle
-            XCTAssertNotNil(styleAtom, "First atom should be style atom")
-            XCTAssertEqual(styleAtom?.style, .text, "Should be text style")
-        }
-
         // Check denominator
         let denominator = try XCTUnwrap(frac.denominator, desc)
         XCTAssertTrue(denominator.atoms.count >= 1, "Denominator should have at least style atom")
 
-        if denominator.atoms.count > 1 {
-            let styleAtom = denominator.atoms[0] as? MTMathStyle
-            XCTAssertNotNil(styleAtom, "First atom should be style atom")
-            XCTAssertEqual(styleAtom?.style, .text, "Should be text style")
-        }
     }
 
     func testDisplayAndTextStyleFractions() throws {
@@ -3532,5 +3513,4 @@ final class MTMathListBuilderTests: XCTestCase {
     }
 
 }
-
 

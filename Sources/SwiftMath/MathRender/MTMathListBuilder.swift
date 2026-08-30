@@ -597,7 +597,15 @@ public struct MTMathListBuilder {
                                 str += "\\cfrac{\(mathListToString(frac.numerator!))}{\(mathListToString(frac.denominator!))}"
                             }
                         } else if frac.hasRule {
-                            str += "\\frac{\(mathListToString(frac.numerator!))}{\(mathListToString(frac.denominator!))}"
+                            let command: String
+                            if frac.forcedStyle == .display {
+                                command = "dfrac"
+                            } else if frac.forcedStyle == .text {
+                                command = "tfrac"
+                            } else {
+                                command = "frac"
+                            }
+                            str += "\\\(command){\(mathListToString(frac.numerator!))}{\(mathListToString(frac.denominator!))}"
                         } else {
                             let command: String
                             if frac.leftDelimiter.isEmpty && frac.rightDelimiter.isEmpty {

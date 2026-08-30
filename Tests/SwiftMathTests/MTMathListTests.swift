@@ -368,6 +368,7 @@ final class MTMathListTests: XCTestCase {
         frac.denominator = list2;
         frac.leftDelimiter = "a";
         frac.rightDelimiter = "b";
+        frac.forcedStyle = .display
 
         let copy = MTFraction(frac)
         try checkAtomCopy(copy, original:frac, forTest:self.description)
@@ -376,6 +377,9 @@ final class MTMathListTests: XCTestCase {
         XCTAssertFalse(copy.hasRule)
         XCTAssertEqual(copy.leftDelimiter, "a");
         XCTAssertEqual(copy.rightDelimiter, "b");
+        XCTAssertEqual(copy.forcedStyle, .display)
+        let finalized = try XCTUnwrap(frac.finalized as? MTFraction)
+        XCTAssertEqual(finalized.forcedStyle, .display)
     }
 
     func testCopyRadical() throws {
