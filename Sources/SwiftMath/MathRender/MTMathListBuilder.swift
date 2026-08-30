@@ -251,13 +251,13 @@ public struct MTMathListBuilder {
         // Check display delimiters first (more specific patterns)
 
         // \[...\] - LaTeX display math
-        if trimmed.hasPrefix("\\[") && trimmed.hasSuffix("\\]") && trimmed.count > 4 {
+        if trimmed.hasPrefix("\\[") && trimmed.hasSuffix("\\]") {
             let content = String(trimmed.dropFirst(2).dropLast(2))
             return (content, .display)
         }
 
         // $$...$$ - TeX display math (check before single $)
-        if trimmed.hasPrefix("$$") && trimmed.hasSuffix("$$") && trimmed.count > 4 {
+        if trimmed.hasPrefix("$$") && trimmed.hasSuffix("$$") {
             let content = String(trimmed.dropFirst(2).dropLast(2))
             return (content, .display)
         }
@@ -265,7 +265,7 @@ public struct MTMathListBuilder {
         // Check inline delimiters
 
         // \(...\) - LaTeX inline math
-        if trimmed.hasPrefix("\\(") && trimmed.hasSuffix("\\)") && trimmed.count > 4 {
+        if trimmed.hasPrefix("\\(") && trimmed.hasSuffix("\\)") {
             let content = String(trimmed.dropFirst(2).dropLast(2))
             return (content, .inline)
         }
