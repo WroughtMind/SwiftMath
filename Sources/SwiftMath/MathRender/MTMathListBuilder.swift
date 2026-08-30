@@ -803,30 +803,16 @@ public struct MTMathListBuilder {
         } else if command == "dfrac" {
             // Display-style fraction command has 2 arguments
             let frac = MTFraction()
-            let numerator = self.buildInternal(true)
-            let denominator = self.buildInternal(true)
-
-            // Prepend \displaystyle to force display mode rendering
-            let displayStyle = MTMathStyle(style: .display)
-            numerator?.insert(displayStyle, at: 0)
-            denominator?.insert(displayStyle, at: 0)
-
-            frac.numerator = numerator
-            frac.denominator = denominator
+            frac.forcedStyle = .display
+            frac.numerator = self.buildInternal(true)
+            frac.denominator = self.buildInternal(true)
             return frac;
         } else if command == "tfrac" {
             // Text-style fraction command has 2 arguments
             let frac = MTFraction()
-            let numerator = self.buildInternal(true)
-            let denominator = self.buildInternal(true)
-
-            // Prepend \textstyle to force text mode rendering
-            let textStyle = MTMathStyle(style: .text)
-            numerator?.insert(textStyle, at: 0)
-            denominator?.insert(textStyle, at: 0)
-
-            frac.numerator = numerator
-            frac.denominator = denominator
+            frac.forcedStyle = .text
+            frac.numerator = self.buildInternal(true)
+            frac.denominator = self.buildInternal(true)
             return frac;
         } else if command == "binom" {
             // A binom command has 2 arguments
@@ -1284,30 +1270,16 @@ public struct MTMathListBuilder {
         } else if command == "dfrac" {
             // Display-style fraction command has 2 arguments
             let frac = MTFraction()
-            let numerator = self.buildInternal(true)
-            let denominator = self.buildInternal(true)
-
-            // Prepend \displaystyle to force display mode rendering
-            let displayStyle = MTMathStyle(style: .display)
-            numerator?.insert(displayStyle, at: 0)
-            denominator?.insert(displayStyle, at: 0)
-
-            frac.numerator = numerator
-            frac.denominator = denominator
+            frac.forcedStyle = .display
+            frac.numerator = self.buildInternal(true)
+            frac.denominator = self.buildInternal(true)
             return frac
         } else if command == "tfrac" {
             // Text-style fraction command has 2 arguments
             let frac = MTFraction()
-            let numerator = self.buildInternal(true)
-            let denominator = self.buildInternal(true)
-
-            // Prepend \textstyle to force text mode rendering
-            let textStyle = MTMathStyle(style: .text)
-            numerator?.insert(textStyle, at: 0)
-            denominator?.insert(textStyle, at: 0)
-
-            frac.numerator = numerator
-            frac.denominator = denominator
+            frac.forcedStyle = .text
+            frac.numerator = self.buildInternal(true)
+            frac.denominator = self.buildInternal(true)
             return frac
         } else if command == "binom" {
             let frac = MTFraction(hasRule: false)

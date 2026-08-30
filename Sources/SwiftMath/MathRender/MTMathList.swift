@@ -328,6 +328,8 @@ public class MTFraction: MTMathAtom {
     public var rightDelimiter = ""
     public var numerator: MTMathList?
     public var denominator: MTMathList?
+    /// A fraction-local TeX style forced by `\dfrac` or `\tfrac`.
+    public var forcedStyle: MTLineStyle?
 
     // Continued fraction properties
     public var isContinuedFraction: Bool = false
@@ -339,6 +341,7 @@ public class MTFraction: MTMathAtom {
         if let frac = frac {
             self.numerator = MTMathList(frac.numerator)
             self.denominator = MTMathList(frac.denominator)
+            self.forcedStyle = frac.forcedStyle
             self.hasRule = frac.hasRule
             self.leftDelimiter = frac.leftDelimiter
             self.rightDelimiter = frac.rightDelimiter
@@ -354,7 +357,17 @@ public class MTFraction: MTMathAtom {
     }
     
     override public var description: String {
-        var string = self.hasRule ? "\\frac" : "\\atop"
+        let fractionCommand: String
+        if !self.hasRule {
+            fractionCommand = "\\atop"
+        } else if forcedStyle == .display {
+            fractionCommand = "\\dfrac"
+        } else if forcedStyle == .text {
+            fractionCommand = "\\tfrac"
+        } else {
+            fractionCommand = "\\frac"
+        }
+        var string = fractionCommand
         if !self.leftDelimiter.isEmpty {
             string += "[\(self.leftDelimiter)]"
         }

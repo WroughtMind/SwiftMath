@@ -806,6 +806,22 @@ class MTTypesetter {
     func makeFraction(_ frac:MTFraction?) -> MTDisplay? {
         guard let frac = frac else { return nil }
 
+        if let forcedStyle = frac.forcedStyle, forcedStyle != style {
+            let typesetter = MTTypesetter(
+                withFont: font,
+                style: forcedStyle,
+                cramped: cramped,
+                spaced: spaced,
+                maxWidth: maxWidth
+            )
+            typesetter.currentPosition = currentPosition
+            return typesetter.makeResolvedFraction(frac)
+        }
+        return makeResolvedFraction(frac)
+    }
+
+    private func makeResolvedFraction(_ frac: MTFraction) -> MTDisplay? {
+
         // lay out the parts of the fraction
         let numeratorStyle: MTLineStyle
         let denominatorStyle: MTLineStyle
